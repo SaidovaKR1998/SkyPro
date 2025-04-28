@@ -22,6 +22,9 @@ def get_mask_account(account_number: str) -> str:
     Маскирует номер счета в формате **XXXX
     Показывает только последние 4 цифры, перед ними **
     """
+    if not isinstance(account_number, str):
+        raise AttributeError("Ошибка: Номер счета должен быть строкой")
+
     # Удаляем все пробелы (если есть) и проверяем, что номер состоит из цифр
     clean_number = account_number.replace(" ", "")
     if not clean_number.isdigit():

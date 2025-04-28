@@ -27,22 +27,25 @@ def mask_account_card(account_info: str) -> str:
 
     return f"{name} {masked_number}"
 
+from datetime import datetime
+
 
 def get_date(iso_date: str) -> str:
     """
     Преобразует дату из формата ISO в формат 'ДД.ММ.ГГГГ'
-
-    :param iso_date: Строка с датой в формате "2024-03-11T02:26:18.671407"
-    :return: Строка с датой в формате "11.03.2024"
+    Возвращает пустую строку если:
+    - нет символа 'T' (отсутствует время)
+    - дата некорректна
+    - передан пустая строка
     """
-    try:
-        # Разделяем дату и время
-        date_part = iso_date.split('T')[0]
-        year, month, day = date_part.split('-')
-        return f"{day}.{month}.{year}"
-    except (IndexError, ValueError):
+    if not iso_date or 'T' not in iso_date:
         return ""
 
+    try:
+        dt = datetime.fromisoformat(iso_date)
+        return f"{dt.day:02d}.{dt.month:02d}.{dt.year}"
+    except ValueError:
+        return ""
 
 print(mask_account_card("Visa Platinum 7000792289606361"))
 print(mask_account_card("Maestro 7000792289606361"))
