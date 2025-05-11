@@ -1,3 +1,6 @@
+from datetime import datetime
+
+
 def mask_account_card(account_info: str) -> str:
     """
     Маскирует номер карты или счета в переданной строке.
@@ -27,8 +30,6 @@ def mask_account_card(account_info: str) -> str:
 
     return f"{name} {masked_number}"
 
-from datetime import datetime
-
 
 def get_date(iso_date: str) -> str:
     """
@@ -46,6 +47,7 @@ def get_date(iso_date: str) -> str:
         return f"{dt.day:02d}.{dt.month:02d}.{dt.year}"
     except ValueError:
         return ""
+
 
 print(mask_account_card("Visa Platinum 7000792289606361"))
 print(mask_account_card("Maestro 7000792289606361"))
