@@ -34,3 +34,6 @@ exclude = '.git'
 disallow_untyped_defs = true
 warn_return_any = true
 exclude = 'venv'
+
+[tool.isort]
+force_single_line = true
