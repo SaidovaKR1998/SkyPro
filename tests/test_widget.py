@@ -79,8 +79,6 @@ def malformed_dates():
     ("Invalid 123", "Invalid 123"),
     ("", "")
 ])
-
-
 def test_mask_account_card_parametrized(input_str, expected):
     assert mask_account_card(input_str) == expected
 

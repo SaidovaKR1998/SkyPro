@@ -1,4 +1,6 @@
 import pytest
+from src.masks import get_mask_card_number, get_mask_account
+
 
 @pytest.fixture
 def valid_card_numbers():
@@ -7,6 +9,7 @@ def valid_card_numbers():
         "1234 5678 9012 3456",
         "1111222233334444"
     ]
+
 
 @pytest.fixture
 def invalid_card_numbers():
@@ -18,6 +21,7 @@ def invalid_card_numbers():
         "1234 5678 9012 345"  # 15 цифр с пробелами
     ]
 
+
 @pytest.fixture
 def valid_account_numbers():
     return [
@@ -25,6 +29,7 @@ def valid_account_numbers():
         "73654108430135874305",
         "1234 5678 9012 3456 7890"
     ]
+
 
 @pytest.fixture
 def invalid_account_numbers():
@@ -34,10 +39,6 @@ def invalid_account_numbers():
         "",          # пустая строка
         "1 2 3 4"    # пробелы, но всего 4 цифры
     ]
-
-# Тесты для функции get_mask_card_number
-import pytest
-from src.masks import get_mask_card_number
 
 
 def test_valid_card_masking(valid_card_numbers):
@@ -71,10 +72,6 @@ def test_card_number_edge_cases():
     # Проверка обработки не строковых значений
     with pytest.raises(AttributeError):
         get_mask_card_number(1234567890123456)
-
-# Тесты для функции get_mask_account
-import pytest
-from src.masks import get_mask_account
 
 
 def test_valid_account_masking(valid_account_numbers):
@@ -118,7 +115,7 @@ def test_account_number_edge_cases():
     with pytest.raises(AttributeError):
         get_mask_account(1234567890)
 
-# Дополнительные проверки
+
 def test_card_number_formatting():
     """Тестирование правильности форматирования номера карты"""
     masked = get_mask_card_number("1234567890123456")
@@ -128,6 +125,7 @@ def test_card_number_formatting():
     assert parts[1] == "56**"
     assert parts[2] == "****"
     assert parts[3] == "3456"
+
 
 def test_account_number_formatting():
     """Тестирование правильности форматирования номера счета"""
