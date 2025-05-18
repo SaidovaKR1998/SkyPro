@@ -1,22 +1,19 @@
-import os
-import pytest
 import sys
 from pathlib import Path
-from datetime import datetime
+import pytest
+from src.decorators import log
 
 sys.path.append(str(Path(__file__).parent.parent))
-from src.decorators import log
 
 
 def read_log_file(filename):
-    with open(filename, 'r') as f:
+    """Чтение содержимого лог-файла."""
+    with open(filename, 'r', encoding='utf-8') as f:
         return f.read()
 
 
-# Основные тесты для декоратора log
 def test_log_to_console(capsys):
-    """Тестирование логирования в консоль"""
-
+    """Тестирование логирования в консоль."""
     @log()
     def add(a, b):
         return a + b
@@ -32,8 +29,7 @@ def test_log_to_console(capsys):
 
 
 def test_log_error_to_console(capsys):
-    """Тестирование логирования ошибок в консоль"""
-
+    """Тестирование логирования ошибок в консоль."""
     @log()
     def divide(a, b):
         return a / b
@@ -50,7 +46,7 @@ def test_log_error_to_console(capsys):
 
 
 def test_log_to_file(tmp_path):
-    """Тестирование логирования в файл"""
+    """Тестирование логирования в файл."""
     log_file = tmp_path / "test_log.txt"
 
     @log(filename=str(log_file))
@@ -67,7 +63,7 @@ def test_log_to_file(tmp_path):
 
 
 def test_log_with_kwargs(tmp_path):
-    """Тестирование с именованными аргументами"""
+    """Тестирование с именованными аргументами."""
     log_file = tmp_path / "kwargs_log.txt"
 
     @log(filename=str(log_file))
@@ -83,8 +79,7 @@ def test_log_with_kwargs(tmp_path):
 
 
 def test_log_with_empty_args(capsys):
-    """Тестирование функции без аргументов"""
-
+    """Тестирование функции без аргументов."""
     @log()
     def no_args():
         return "OK"
@@ -98,7 +93,7 @@ def test_log_with_empty_args(capsys):
 
 
 def test_log_with_exception_args(tmp_path):
-    """Тестирование логирования аргументов при исключении"""
+    """Тестирование логирования аргументов при исключении."""
     log_file = tmp_path / "exception_args.log"
 
     @log(filename=str(log_file))
@@ -117,16 +112,15 @@ def test_log_with_exception_args(tmp_path):
 
 @pytest.fixture(autouse=True)
 def cleanup(request, tmp_path):
-    """Фикстура для очистки временных файлов"""
-
+    """Фикстура для очистки временных файлов."""
     def remove_test_files():
         test_files = [
-            "test_log.txt",
-            "kwargs_log.txt",
-            "exception_args.log"
+            tmp_path / "test_log.txt",
+            tmp_path / "kwargs_log.txt",
+            tmp_path / "exception_args.log"
         ]
         for file in test_files:
-            if os.path.exists(file):
-                os.remove(file)
+            if file.exists():
+                file.unlink()
 
     request.addfinalizer(remove_test_files)
