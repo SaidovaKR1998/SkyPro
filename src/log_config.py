@@ -1,31 +1,29 @@
+# logger_config.py
 import logging
 import os
-from pathlib import Path
 
+# Получить текущую директорию (например, src)
+current_dir = os.getcwd()
 
-def setup_logger(name: str, log_file: str) -> logging.Logger:
-    """Настройка логгера для модуля"""
+# Подняться на уровень выше (до SkyPro)
+project_root = os.path.dirname(current_dir)
 
-    # Создаем папку logs если ее нет
-    logs_dir = Path("logs")
-    logs_dir.mkdir(exist_ok=True)
+# Путь к папке logs
+logs_dir = os.path.join(project_root, 'logs')
 
-    # Создаем логгер
-    logger = logging.getLogger(name)
-    logger.setLevel(logging.DEBUG)
+# Создать папку logs, если не существует
+os.makedirs(logs_dir, exist_ok=True)
 
-    # Формат сообщений
-    formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S'
-    )
+# Настройка форматирования
+log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
-    # Обработчик для записи в файл (перезаписывает файл при каждом запуске)
-    file_handler = logging.FileHandler(
-        filename=logs_dir / log_file,
-        mode='w'
-    )
-    file_handler.setFormatter(formatter)
-    logger.addHandler(file_handler)
+# Создаем хранилище логгера
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)  # или другой уровень по необходимости
 
-    return logger
+# Создаем обработчик для записи в файл (перезаписывать при каждом запуске)
+file_handler = logging.FileHandler(os.path.join(logs_dir, 'application.log'), mode='w', encoding='utf-8')
+file_handler.setFormatter(logging.Formatter(log_format))
+
+# Добавляем обработчик к логгеру
+logger.addHandler(file_handler)
