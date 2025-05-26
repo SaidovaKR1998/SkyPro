@@ -1,33 +1,26 @@
 import json
-from typing import List, Dict
+from src.log_config import logger
 
-
-def load_transactions(file_path: str) -> List[Dict]:
+def load_transactions(file_path: str) -> list:
     """
     Загружает список транзакций из JSON-файла.
-
-    Args:
-        file_path: Путь к JSON-файлу с транзакциями
-
-    Returns:
-        Список словарей с транзакциями. Если файл не найден, пустой или содержит не список,
-        возвращает пустой список.
     """
     try:
-        # Открываем файл для чтения
         with open(file_path, 'r', encoding='utf-8') as file:
-            # Загружаем данные из JSON
             data = json.load(file)
-
-            # Проверяем, что данные - это список
             if isinstance(data, list):
+                logger.info(f"Успешно загружено {len(data)} транзакций из {file_path}")
                 return data
-            return []
-
-    except (FileNotFoundError, json.JSONDecodeError):
-        # Если файл не найден или невалидный JSON
+            else:
+                logger.warning(f"Данные в файле {file_path} не являются списком")
+                return []
+    except FileNotFoundError:
+        logger.error(f"Файл не найден: {file_path}")
+        return []
+    except json.JSONDecodeError as e:
+        logger.error(f"Ошибка декодирования JSON в файле {file_path}: {e}")
         return []
 
+# пример вызова
 transactions = load_transactions('../data/operations.json')
-print(f"Загружено {len(transactions)} транзакций")
-
+logger.info(f"Загружено {len(transactions)} транзакций")
