@@ -1,6 +1,3 @@
-from datetime import datetime
-
-
 def mask_account_card(account_info: str) -> str:
     """
     Маскирует номер карты или счета в переданной строке.
@@ -34,18 +31,16 @@ def mask_account_card(account_info: str) -> str:
 def get_date(iso_date: str) -> str:
     """
     Преобразует дату из формата ISO в формат 'ДД.ММ.ГГГГ'
-    Возвращает пустую строку если:
-    - нет символа 'T' (отсутствует время)
-    - дата некорректна
-    - передан пустая строка
-    """
-    if not iso_date or 'T' not in iso_date:
-        return ""
 
+    :param iso_date: Строка с датой в формате "2024-03-11T02:26:18.671407"
+    :return: Строка с датой в формате "11.03.2024"
+    """
     try:
-        dt = datetime.fromisoformat(iso_date)
-        return f"{dt.day:02d}.{dt.month:02d}.{dt.year}"
-    except ValueError:
+        # Разделяем дату и время
+        date_part = iso_date.split('T')[0]
+        year, month, day = date_part.split('-')
+        return f"{day}.{month}.{year}"
+    except (IndexError, ValueError):
         return ""
 
 
