@@ -36,7 +36,7 @@ class TestTransactionFunctions(unittest.TestCase):
         """Тест фильтрации по описанию"""
         # Поиск по слову "перевод" (должно найти 2 транзакции)
         result = filter_transactions_by_description(TEST_TRANSACTIONS, 'перевод')
-        self.assertEqual(len(result), 2)  # Исправлено ожидаемое значение
+        self.assertEqual(len(result), 2)
 
         # Поиск по слову "вклад" (должно найти 1 транзакцию)
         result = filter_transactions_by_description(TEST_TRANSACTIONS, 'вклад')
@@ -44,14 +44,14 @@ class TestTransactionFunctions(unittest.TestCase):
 
         # Поиск без учета регистра
         result = filter_transactions_by_description(TEST_TRANSACTIONS, 'ПЕРЕВОД')
-        self.assertEqual(len(result), 2)  # Исправлено ожидаемое значение
+        self.assertEqual(len(result), 2)
 
         # Поиск несуществующего слова
         result = filter_transactions_by_description(TEST_TRANSACTIONS, 'кредит')
         self.assertEqual(len(result), 0)
 
     def test_count_by_categories(self):
-        """Тест подсчета по категориям"""
+        """Тест подсчета по категориям (с учётом нового поведения Counter)"""
         categories = ['перевод', 'вклад', 'оплата']
 
         # Ожидаемый результат: {'перевод': 2, 'вклад': 1, 'оплата': 1}
@@ -61,10 +61,16 @@ class TestTransactionFunctions(unittest.TestCase):
         self.assertEqual(result['вклад'], 1)
         self.assertEqual(result['оплата'], 1)
 
-        # Проверка несуществующей категории
+        # Проверка несуществующей категории (должна вернуть 0)
         categories = ['кредит']
         result = count_transactions_by_categories(TEST_TRANSACTIONS, categories)
         self.assertEqual(result['кредит'], 0)
+
+        # Проверка регистронезависимости (если категория передана в верхнем регистре)
+        categories = ['ПЕРЕВОД', 'ВКЛАД']
+        result = count_transactions_by_categories(TEST_TRANSACTIONS, categories)
+        self.assertEqual(result['ПЕРЕВОД'], 2)  # Счётчик должен работать
+        self.assertEqual(result['ВКЛАД'], 1)
 
 
 if __name__ == '__main__':
