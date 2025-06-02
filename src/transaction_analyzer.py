@@ -1,5 +1,6 @@
 import re  # Импортируем модуль для работы с регулярными выражениями
 from typing import List, Dict  # Это для подсказок типов (не обязательно, но полезно)
+from collections import Counter  # Импортируем Counter
 
 # Наша первая функция - фильтрация транзакций по описанию
 def filter_transactions_by_description(transactions: List[Dict], search_string: str) -> List[Dict]:
@@ -15,21 +16,23 @@ def filter_transactions_by_description(transactions: List[Dict], search_string: 
 # Функция подсчета операций по категориям
 def count_transactions_by_categories(transactions: List[Dict], categories: List[str]) -> Dict[str, int]:
     """
-    Считает сколько транзакций относится к каждой категории
+    Считает сколько транзакций относится к каждой категории (используя Counter)
     :param transactions: Список транзакций
     :param categories: Список категорий для поиска
     :return: Словарь {категория: количество}
     """
-    result = {category: 0 for category in categories}  # Создаем словарь с нулями
+    category_counter = Counter()  # Создаём счётчик
+    categories_lower = [category.lower() for category in categories]  # Приводим категории к нижнему регистру
 
-    for tx in transactions:  # Перебираем все транзакции
-        description = tx.get('description', '').lower()  # Описание в нижнем регистре
-        for category in categories:  # Проверяем каждую категорию
-            if category.lower() in description:  # Если категория есть в описании
-                result[category] += 1  # Увеличиваем счетчик
-                break  # Переходим к следующей транзакции
+    for tx in transactions:
+        description = tx.get('description', '').lower()
+        # Находим первую подходящую категорию
+        found_category = next((category for category in categories_lower if category in description), None)
+        if found_category:
+            category_counter[found_category] += 1  # Увеличиваем счётчик для найденной категории
 
-    return result
+    # Возвращаем результат с оригинальным регистром категорий
+    return {category: category_counter[category.lower()] for category in categories}
 
 # Основная функция main()
 def main():
